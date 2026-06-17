@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* brand — navy (albirru-design-system.md §1.1) */
+    --navy-700: #16296b;
+    --navy-800: #112258;
+    --navy-900: #0b1a47;
+    /* brand — blue (§1.2) */
+    --blue-100: #e7eeff;
+    --blue-300: #6e9bf0;
+    --blue-400: #4e7bf2;
+    --blue-500: #2f5bff;
+    --blue-600: #2b54e6;
+    --blue-700: #2244c2;
+    /* semantic — success (§1.3) */
+    --success-100: #dcf5ea;
+    --success-500: #16b47a;
+    --success-700: #0e8a5c;
+    /* neutrals / text (§1.4–1.5) */
+    --ink-strong: #0f172a;
+    --ink-body: #475569;
+    --ink-muted: #94a3b8;
+    --border: #e8edf4;
+    --bg-canvas: #ffffff;
+    --bg-muted: #f5f8fc;
+    --focus-ring: rgba(47, 91, 255, 0.4);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-family: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    border-radius: 8px;
+  }
+}
+
+@layer utilities {
+  .grad-card {
+    background-image: linear-gradient(140deg, var(--blue-500) 0%, var(--navy-800) 100%);
+  }
+  .grad-photo {
+    background-image: linear-gradient(150deg, #1b2c66 0%, #2f5bff 120%);
+  }
+  .grad-monogram {
+    background-image: linear-gradient(140deg, #6e9bf0 0%, #2f5bff 100%);
+  }
+  .blob {
+    background-image: radial-gradient(circle at 30% 30%, rgba(78, 123, 242, 0.55), rgba(11, 26, 71, 0) 65%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

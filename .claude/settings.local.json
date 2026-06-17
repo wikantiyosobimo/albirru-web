@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(echo \"1\\) Auth health:\")",
+      "Bash(curl -s -o /dev/null -w '  HTTP %{http_code}\\\\n' https://lhygzydpmjamrzdtewxa.supabase.co/auth/v1/health -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeWd6eWRwbWphbXJ6ZHRld3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NzU1MjYsImV4cCI6MjA5NzA1MTUyNn0.rqgTplzd8Qes_3VlBMTvEsEyPgIxg-Vy4pdkS8rvsjg')",
+      "Bash(echo \"2\\) REST profiles \\(RLS, anon harus 200 + array, mungkin kosong\\):\")",
+      "Bash(curl -s -w '\\\\n  HTTP %{http_code}\\\\n' 'https://lhygzydpmjamrzdtewxa.supabase.co/rest/v1/profiles?select=id&limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeWd6eWRwbWphbXJ6ZHRld3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NzU1MjYsImV4cCI6MjA5NzA1MTUyNn0.rqgTplzd8Qes_3VlBMTvEsEyPgIxg-Vy4pdkS8rvsjg' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeWd6eWRwbWphbXJ6ZHRld3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NzU1MjYsImV4cCI6MjA5NzA1MTUyNn0.rqgTplzd8Qes_3VlBMTvEsEyPgIxg-Vy4pdkS8rvsjg')",
+      "Bash(echo \"3\\) REST leads insert policy table reachable:\")",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(echo \"started pid $!\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"  HTTP %{http_code}\\\\n\" \"http://localhost:3000/masuk\")",
+      "Bash(curl -s -o /dev/null -w \"  HTTP %{http_code} -> %{redirect_url}\\\\n\" \"http://localhost:3000/app\")",
+      "Bash(curl -s -o /dev/null -w \"  HTTP %{http_code}\\\\n\" \"http://localhost:3000/\")",
+      "Bash(curl -s -o /dev/null -w \"/onboarding HTTP %{http_code}\\\\n\" \"http://localhost:3000/onboarding\")",
+      "Bash(curl -s -o /dev/null \"http://localhost:3000/app\")",
+      "Bash(curl -s -o /dev/null \"http://localhost:3000/app/try-out/1/hasil\")",
+      "Bash(xargs echo)",
+      "Bash(touch app/app/page.tsx \"app/app/try-out/[id]/hasil/page.tsx\")",
+      "Bash(curl -s -o /dev/null -w \"/app -> %{http_code}\\\\n\" \"http://localhost:3000/app\")",
+      "Bash(curl -s -o /dev/null -w \"/hasil -> %{http_code}\\\\n\" \"http://localhost:3000/app/try-out/1/hasil\")",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT: $?\")",
+      "mcp__26a2dea7-c06e-43ad-8504-e6a9cd62192e__list_tables",
+      "mcp__26a2dea7-c06e-43ad-8504-e6a9cd62192e__apply_migration",
+      "mcp__26a2dea7-c06e-43ad-8504-e6a9cd62192e__execute_sql",
+      "Bash(curl -s -o /dev/null \"http://localhost:3000/app/try-out\")",
+      "Bash(curl -s -o /dev/null \"http://localhost:3000/app/try-out?kategori=literasi\")",
+      "Bash(curl -s -o /dev/null \"http://localhost:3000/app/try-out/snbt-06\")",
+      "Bash(xargs echo \"count:\")",
+      "Bash(grep -n \"Roadmap ML \\(masa depan\\)\" \"D:/07. Vibe Coding/Albirru Online/ALBIRRU_PRD_v3.md\")",
+      "Bash(sed -i '643,644d' \"D:/07. Vibe Coding/Albirru Online/ALBIRRU_PRD_v3.md\" *)",
+      "mcp__visualize__read_me"
+    ]
+  }
+}
