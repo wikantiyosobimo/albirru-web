@@ -37,8 +37,8 @@ export function AnnouncementForm() {
   if (done) return <Submitted label="Pengumuman terkirim." />;
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <div><label className={labelCls}>Judul</label><input name="judul" required className={inputCls} placeholder="mis. Jadwal Try Out Akbar" /></div>
-      <div><label className={labelCls}>Isi</label><textarea name="isi" required rows={4} className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-body-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none" placeholder="Tulis pengumuman…" /></div>
+      <div><label className={labelCls} htmlFor="announcement-title">Judul</label><input id="announcement-title" name="judul" required className={inputCls} placeholder="mis. Jadwal Try Out Akbar" /></div>
+      <div><label className={labelCls} htmlFor="announcement-body">Isi</label><textarea id="announcement-body" name="isi" required rows={4} className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-body-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none" placeholder="Tulis pengumuman…" /></div>
       {error ? <p className="rounded-lg bg-[#FDECEC] px-3.5 py-2.5 text-body-sm text-[#E5484D]">{error}</p> : null}
       <button disabled={loading} className="inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-6 text-body-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60">{loading ? <Loader2 size={16} className="animate-spin" /> : null} Kirim Pengumuman</button>
     </form>
@@ -50,12 +50,12 @@ export function AssignmentForm() {
   if (done) return <Submitted label="Penugasan dibuat." />;
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <div><label className={labelCls}>Judul Tugas</label><input name="judul" required className={inputCls} placeholder="mis. Latihan Penalaran Umum Bab 3" /></div>
+      <div><label className={labelCls} htmlFor="assignment-title">Judul Tugas</label><input id="assignment-title" name="judul" required className={inputCls} placeholder="mis. Latihan Penalaran Umum Bab 3" /></div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div><label className={labelCls}>Tipe</label><select name="ref_tipe" className={inputCls}><option value="tryout">Try Out</option><option value="materi">Materi</option><option value="latihan">Latihan</option></select></div>
-        <div><label className={labelCls}>Target Kelas</label><input name="target_kelas" className={inputCls} placeholder="XII IPA 1" /></div>
+        <div><label className={labelCls} htmlFor="assignment-type">Tipe</label><select id="assignment-type" name="ref_tipe" className={inputCls}><option value="tryout">Try Out</option><option value="materi">Materi</option><option value="latihan">Latihan</option></select></div>
+        <div><label className={labelCls} htmlFor="assignment-class">Target Kelas</label><input id="assignment-class" name="target_kelas" className={inputCls} placeholder="XII IPA 1" /></div>
       </div>
-      <div><label className={labelCls}>Batas Waktu</label><input name="due_at" type="date" className={inputCls} /></div>
+      <div><label className={labelCls} htmlFor="assignment-due-date">Batas Waktu</label><input id="assignment-due-date" name="due_at" type="date" className={inputCls} /></div>
       {error ? <p className="rounded-lg bg-[#FDECEC] px-3.5 py-2.5 text-body-sm text-[#E5484D]">{error}</p> : null}
       <button disabled={loading} className="inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-6 text-body-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60">{loading ? <Loader2 size={16} className="animate-spin" /> : null} Buat Penugasan</button>
     </form>

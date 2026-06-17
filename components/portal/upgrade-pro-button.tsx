@@ -48,8 +48,9 @@ export function UpgradeProButton({ className, children }: { className?: string; 
       <button type="button" onClick={() => setOpen(true)} className={className}>{children}</button>
 
       {open ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={() => !busy && setOpen(false)}>
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <button type="button" aria-label="Tutup upgrade pro" className="absolute inset-0 bg-black/40" onClick={() => !busy && setOpen(false)} disabled={busy} />
+          <div role="dialog" aria-modal="true" className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 text-h-sm text-ink"><Gem size={18} className="text-brand" /> Albirru Pro</div>
               <button onClick={() => setOpen(false)} disabled={busy} className="text-ink-muted hover:text-ink disabled:opacity-40"><X size={18} /></button>

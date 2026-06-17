@@ -133,9 +133,9 @@ export function PortalSidebar({ plan = "free" }: { plan?: string }) {
 
       {/* MOBILE DRAWER */}
       {mobileOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setMobileOpen(false)}>
-          <div className="absolute inset-0 bg-black/40" />
-          <aside className="absolute left-0 top-0 h-full w-72 bg-navy-900 shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button type="button" aria-label="Tutup menu" className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 h-full w-72 bg-navy-900 shadow-lg">
             <button onClick={() => setMobileOpen(false)} aria-label="Tutup menu" className="absolute right-3 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10"><X size={18} /></button>
             <SidebarBody pathname={pathname} collapsed={false} plan={plan} onNavigate={() => setMobileOpen(false)} />
           </aside>

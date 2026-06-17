@@ -108,8 +108,9 @@ export function TryoutCta({ tryoutId, plan, harga, hargaLabel, started, selesai,
 
       {/* MODAL QRIS */}
       {showPay ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => !busy && setShowPay(false)}>
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <button type="button" aria-label="Tutup pembayaran" className="absolute inset-0 bg-black/40" onClick={() => !busy && setShowPay(false)} disabled={busy} />
+          <div role="dialog" aria-modal="true" className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-h-sm text-ink">Pembayaran QRIS</div>
