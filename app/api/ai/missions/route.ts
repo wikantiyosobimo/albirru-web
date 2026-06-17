@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { getUserIntelligence } from "@/lib/portal/intelligence";
 import { getPrioritasTopik } from "@/lib/intelligence/weakness";
 import { generateMissions } from "@/lib/intelligence/missions";
@@ -12,6 +13,9 @@ export async function POST() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Tidak terautentikasi." }, { status: 401 });
+
+  const rl = rateLimit(`ai-mis:${user.id}`, 10, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
 
   // Streak (jika tabel terisi)
   let streak = 0;

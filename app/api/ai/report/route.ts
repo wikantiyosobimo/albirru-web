@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { getUserIntelligence } from "@/lib/portal/intelligence";
 import { hitungWeaknessIndex } from "@/lib/intelligence/weakness";
 import { prediksiSkorAkhir } from "@/lib/ml/score-predictor";
@@ -12,6 +13,10 @@ export async function POST() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Tidak terautentikasi." }, { status: 401 });
+
+  // Lebih ketat: laporan memanggil Claude (Tier 3) → batasi 5/menit.
+  const rl = rateLimit(`ai-rep:${user.id}`, 5, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
 
   const { data: profile } = await supabase.from("profiles").select("nama").eq("id", user.id).single();
   const nama = profile?.nama ?? "Siswa";

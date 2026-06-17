@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { verifySignature, mapStatus, type MidtransNotification } from "@/lib/payments/midtrans";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rateLimit, clientKey, tooManyRequests } from "@/lib/rate-limit";
 
 // POST /api/webhooks/midtrans — terima notifikasi pembayaran.
 // Verifikasi signature → catat payment_logs → aktifkan subscription/Pro bila settlement.
 // Memakai service-role (tanpa sesi user) karena dipanggil oleh server Midtrans.
 
 export async function POST(req: Request) {
+  // Lindungi dari flooding (verifikasi signature tetap lapis utama).
+  const rl = rateLimit(clientKey(req, "midtrans"), 60, 60_000);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
+
   let body: MidtransNotification;
   try {
     body = (await req.json()) as MidtransNotification;
