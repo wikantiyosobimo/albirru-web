@@ -10,3 +10,5 @@ next-env.d.ts
 
 # Folder duplikat tidak sengaja (bukan bagian project) — jangan di-commit
 /albirru-web/
+
+.vercel
