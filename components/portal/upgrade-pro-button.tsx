@@ -30,6 +30,7 @@ export function UpgradeProButton({ className, children }: { className?: string; 
     setBusy(true); setError(null);
     try {
       const res = await fetch("/api/upgrade-pro", { method: "POST" });
+      if (res.status === 401) { router.push("/masuk?next=/app/profil/langganan"); return; }
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j?.error || "Gagal memproses.");
       setDone(true);

@@ -3,6 +3,7 @@ import {
   Megaphone, Target, ClipboardList, Settings, ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { getPortalProfile } from "@/lib/portal/session";
 import { PortalTopbar } from "@/components/portal/topbar";
 import { NavDropdown } from "@/components/portal/nav-dropdown";
@@ -72,7 +73,7 @@ export default async function NotifikasiPage({ searchParams }: { searchParams: {
                 return <Link key={t.label} href={href} className={cn("rounded-lg px-4 py-2 text-body-sm font-medium transition-colors", t.value === f ? "bg-brand text-white" : "border bg-white text-ink-body hover:bg-muted")}>{t.label}</Link>;
               })}
             </div>
-            <NavDropdown paramKey="kat" icon={Filter} align="right" options={[{ label: "Semua Kategori", value: "" }, { label: "Pencapaian", value: "pencapaian" }, { label: "Jadwal", value: "jadwal" }, { label: "Rekomendasi", value: "rekomendasi" }]} />
+            <Suspense><NavDropdown paramKey="kat" icon={Filter} align="right" options={[{ label: "Semua Kategori", value: "" }, { label: "Pencapaian", value: "pencapaian" }, { label: "Jadwal", value: "jadwal" }, { label: "Rekomendasi", value: "rekomendasi" }]} /></Suspense>
           </div>
 
           <div className="divide-y rounded-2xl border bg-white">

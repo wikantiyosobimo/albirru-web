@@ -3,6 +3,7 @@ import {
   Zap, Target, ArrowRight, Map, BarChart3, BookOpen, Crosshair, Clock,
 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { getPortalProfile } from "@/lib/portal/session";
 import { Dropdown } from "@/components/portal/dropdown";
 import { PortalTopbar } from "@/components/portal/topbar";
@@ -112,7 +113,7 @@ export default async function Page() {
         title="Academic Intelligence"
         subtitle="Profil akademikmu terus berkembang. Berikut analisis terbaru berdasarkan 12 Try Out dan 4.200 jawaban soal."
         nama={nama}
-        right={<Dropdown icon={Calendar} align="right" options={["20 Apr – 20 Mei 2024", "Maret 2024", "April 2024", "Mei 2024", "90 hari terakhir"]} />}
+        right={<Suspense><Dropdown icon={Calendar} align="right" options={["20 Apr – 20 Mei 2024", "Maret 2024", "April 2024", "Mei 2024", "90 hari terakhir"]} /></Suspense>}
       />
 
       <div className="space-y-5 p-5 lg:p-7">
@@ -124,7 +125,7 @@ export default async function Page() {
               <p className="text-body-sm text-ink-muted">Ringkasan progres, kekuatan, area perbaikan & proyeksi skor hari-H dari data nyatamu.</p>
             </div>
           </div>
-          <div className="mt-4"><AiReportButton /></div>
+          <div className="mt-4"><Suspense><AiReportButton /></Suspense></div>
         </div>
 
         {/* ROW 1 — top metrics */}

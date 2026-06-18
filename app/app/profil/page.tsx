@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Mail, GraduationCap, School, Target, Gem, Bell, Shield, ChevronRight, Pencil, Award,
+  Users, BookOpen, ClipboardList, Settings,
 } from "lucide-react";
 import { getPortalProfile } from "@/lib/portal/session";
 import { PortalTopbar } from "@/components/portal/topbar";
@@ -12,30 +13,54 @@ export const metadata = { title: "Profil — Albirru" };
 export default async function ProfilPage() {
   const { user, profile } = await getPortalProfile();
   const nama = profile?.nama ?? "Farhan";
+  const role = profile?.role ?? "siswa";
+  const isStaf = role === "staf" || role === "admin";
   const aparatur = profile?.segment === "cpns" || profile?.segment === "pppk";
   const target = aparatur
     ? [profile?.target_instansi, profile?.target_jabatan].filter(Boolean).join(" — ")
     : [profile?.target_kampus, profile?.target_prodi].filter(Boolean).join(" — ");
   const isPro = (profile?.plan ?? "free") !== "free";
 
-  const identitas: { icon: typeof Mail; label: string; value: string }[] = [
+  const identitasSiswa: { icon: typeof Mail; label: string; value: string }[] = [
     { icon: Mail, label: "Email", value: user?.email ?? "-" },
     { icon: GraduationCap, label: "Jenjang", value: profile?.jenjang ? `Kelas ${profile.jenjang}` : "-" },
     { icon: School, label: "Asal Sekolah", value: profile?.asal_sekolah ?? "-" },
     { icon: Target, label: "Target", value: target || "Belum diatur" },
   ];
 
-  const settings = [
+  const identitasStaf: { icon: typeof Mail; label: string; value: string }[] = [
+    { icon: Mail, label: "Email", value: user?.email ?? "-" },
+    { icon: Shield, label: "Role", value: role === "admin" ? "Administrator" : "Tenaga Pengajar" },
+    { icon: School, label: "Institusi", value: profile?.asal_sekolah ?? "-" },
+  ];
+
+  const identitas = isStaf ? identitasStaf : identitasSiswa;
+
+  const settingsSiswa = [
     { icon: Bell, label: "Notifikasi", desc: "Atur preferensi pemberitahuan", href: "/app/notifikasi" },
     { icon: Shield, label: "Keamanan & Kata Sandi", desc: "Ubah kata sandi & keamanan akun", href: "/app/profil/keamanan" },
     { icon: Gem, label: "Langganan", desc: "Kelola paket Albirru-mu", href: "/app/profil/langganan" },
     { icon: Award, label: "Pencapaian", desc: "Lihat badge dan progres XP", href: "/app/achievement" },
   ];
 
+  const settingsStaf = [
+    { icon: Users, label: "Manajemen Siswa", desc: "Kelola daftar dan data siswa", href: "/staf/siswa" },
+    { icon: BookOpen, label: "Materi & Konten", desc: "Upload dan kelola materi ajar", href: "/staf/materi" },
+    { icon: ClipboardList, label: "Try Out & Penugasan", desc: "Buat dan pantau try out", href: "/staf/try-out" },
+    { icon: Shield, label: "Keamanan", desc: "Ubah kata sandi & keamanan akun", href: "/app/profil/keamanan" },
+    ...(role === "admin" ? [{ icon: Settings, label: "Panel Admin", desc: "Kelola pengguna dan konfigurasi sistem", href: "/admin" }] : []),
+  ];
+
+  const settings = isStaf ? settingsStaf : settingsSiswa;
+
   return (
     <>
-      <PortalTopbar title="Profil" subtitle="Kelola akun dan preferensimu." nama={nama}
-        right={<LogoutButton />} />
+      <PortalTopbar
+        title="Profil"
+        subtitle={isStaf ? `Portal ${role === "admin" ? "Administrator" : "Tenaga Pengajar"} — kelola akun dan akses konsolmu.` : "Kelola akun dan preferensimu."}
+        nama={nama}
+        right={<LogoutButton />}
+      />
 
       <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-7">
         <div className="space-y-5">
@@ -45,7 +70,14 @@ export default async function ProfilPage() {
             <div className="flex-1 text-center sm:text-left">
               <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                 <h2 className="text-h-md text-ink">{nama}</h2>
-                <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${isPro ? "bg-brand-100 text-brand" : "bg-muted text-ink-muted"}`}>{isPro ? "Pro" : "Free"}</span>
+                <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${
+                  role === "admin" ? "bg-[#F2EBFF] text-[#6D49C9]"
+                  : role === "staf" ? "bg-[#E9F9F1] text-[#16B47A]"
+                  : isPro ? "bg-brand-100 text-brand"
+                  : "bg-muted text-ink-muted"
+                }`}>
+                  {role === "admin" ? "Admin" : role === "staf" ? "Staf" : isPro ? "Pro" : "Free"}
+                </span>
               </div>
               <p className="mt-0.5 text-body-sm text-ink-muted">{user?.email}</p>
             </div>
@@ -70,7 +102,7 @@ export default async function ProfilPage() {
 
           {/* PENGATURAN */}
           <div className="rounded-2xl border bg-white p-5">
-            <h3 className="text-h-sm text-ink">Pengaturan</h3>
+            <h3 className="text-h-sm text-ink">{isStaf ? "Akses Cepat" : "Pengaturan"}</h3>
             <div className="mt-3 divide-y">
               {settings.map((s) => {
                 const Icon = s.icon;
@@ -88,7 +120,18 @@ export default async function ProfilPage() {
 
         {/* SIDEBAR */}
         <div className="space-y-5">
-          {!isPro ? (
+          {isStaf ? (
+            <div className="rounded-2xl border border-[#6D49C9]/20 bg-[#F2EBFF] p-5">
+              <div className="flex items-center gap-2 text-ink"><Shield size={18} className="text-[#6D49C9]" /><span className="text-body-sm font-bold">Akses {role === "admin" ? "Admin" : "Staf"}</span></div>
+              <p className="mt-1.5 text-caption text-ink-body">
+                {role === "admin" ? "Kamu memiliki akses penuh ke seluruh sistem Albirru." : "Kamu memiliki akses ke portal manajemen kelas dan konten."}
+              </p>
+              <Link href={role === "admin" ? "/admin" : "/staf"}
+                className="mt-3 flex h-10 items-center justify-center rounded-lg bg-[#6D49C9] text-body-sm font-semibold text-white">
+                Buka Konsol {role === "admin" ? "Admin" : "Staf"}
+              </Link>
+            </div>
+          ) : !isPro ? (
             <div className="rounded-2xl border border-brand/30 bg-brand-100 p-5">
               <div className="flex items-center gap-2 text-ink"><Gem size={18} className="text-brand" /><span className="text-body-sm font-bold">Albirru Pro</span></div>
               <p className="mt-1.5 text-caption text-ink-body">Akses semua try out & soal tanpa batas, plus analisis premium.</p>
@@ -102,14 +145,16 @@ export default async function ProfilPage() {
             </div>
           )}
 
-          <div className="rounded-2xl border bg-white p-5">
-            <h3 className="text-body-lg font-bold text-ink">Statistik Singkat</h3>
-            <div className="mt-3 space-y-3 text-body-sm">
-              {[["Try Out Diikuti", "12"], ["Skor Tertinggi", "780"], ["Streak Belajar", "41 hari"]].map((r) => (
-                <div key={r[0]} className="flex items-center justify-between"><span className="text-ink-muted">{r[0]}</span><span className="font-bold text-ink">{r[1]}</span></div>
-              ))}
+          {!isStaf && (
+            <div className="rounded-2xl border bg-white p-5">
+              <h3 className="text-body-lg font-bold text-ink">Statistik Singkat</h3>
+              <div className="mt-3 space-y-3 text-body-sm">
+                {[["Try Out Diikuti", "12"], ["Skor Tertinggi", "780"], ["Streak Belajar", "41 hari"]].map((r) => (
+                  <div key={r[0]} className="flex items-center justify-between"><span className="text-ink-muted">{r[0]}</span><span className="font-bold text-ink">{r[1]}</span></div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
