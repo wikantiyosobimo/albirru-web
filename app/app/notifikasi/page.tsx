@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { getPortalProfile } from "@/lib/portal/session";
 import { PortalTopbar } from "@/components/portal/topbar";
 import { NavDropdown } from "@/components/portal/nav-dropdown";
+import { getLocale, t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type Notif = { icon: typeof Trophy; color: string; title: string; penting?: boolean; sub: string; time: string; unread: boolean; kat: string };
@@ -46,6 +47,7 @@ function Toggle({ on }: { on?: boolean }) {
 
 export default async function NotifikasiPage({ searchParams }: { searchParams: { f?: string; kat?: string } }) {
   const { profile } = await getPortalProfile();
+  const locale = await getLocale();
   const nama = profile?.nama ?? "Farhan";
   const f = searchParams?.f ?? "";
   const kat = searchParams?.kat ?? "";
@@ -57,7 +59,7 @@ export default async function NotifikasiPage({ searchParams }: { searchParams: {
 
   return (
     <>
-      <PortalTopbar title="Notification Center" subtitle="Semua informasi penting tentang aktivitas akademikmu." nama={nama}
+      <PortalTopbar title={t(locale, "notif.title")} subtitle={t(locale, "notif.subtitle")} nama={nama}
         right={<div className="relative hidden md:block"><Bell size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted" /><input aria-label="Cari notifikasi" className="h-10 w-64 rounded-lg border bg-muted pl-10 pr-4 text-body-sm text-ink placeholder:text-ink-muted" placeholder="Cari notifikasi…" /></div>} />
 
       <div className="grid gap-5 p-5 lg:grid-cols-[1fr_360px] lg:p-7">

@@ -19,6 +19,7 @@ export function LanguageToggle() {
     if (next === locale) return;
     setLocale(next);
     document.cookie = `locale=${next}; path=/; max-age=31536000`;
+    window.dispatchEvent(new Event("albirru:locale-changed"));
     router.refresh();
   }
 

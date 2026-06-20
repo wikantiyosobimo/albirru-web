@@ -10,6 +10,7 @@ import { PortalTopbar } from "@/components/portal/topbar";
 import { Ring } from "@/components/portal/ring";
 import { RadarChart } from "@/components/portal/intelligence/radar-chart";
 import { AiReportButton } from "@/components/portal/ai-panel";
+import { getLocale, t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Academic Intelligence — Albirru" };
@@ -102,6 +103,7 @@ function ConsistencyBars() {
 
 export default async function Page() {
   const { profile } = await getPortalProfile();
+  const locale = await getLocale();
   const nama = profile?.nama ?? "Farhan";
 
   const xAt = (i: number) => 40 + i * 125;
@@ -110,8 +112,8 @@ export default async function Page() {
   return (
     <>
       <PortalTopbar
-        title="Academic Intelligence"
-        subtitle="Profil akademikmu terus berkembang. Berikut analisis terbaru berdasarkan 12 Try Out dan 4.200 jawaban soal."
+        title={t(locale, "intel.title")}
+        subtitle={t(locale, "intel.subtitle")}
         nama={nama}
         right={<Suspense><Dropdown icon={Calendar} align="right" options={["20 Apr – 20 Mei 2024", "Maret 2024", "April 2024", "Mei 2024", "90 hari terakhir"]} /></Suspense>}
       />
@@ -121,8 +123,8 @@ export default async function Page() {
         <div className="rounded-2xl border bg-white p-5">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-h-sm text-ink">Laporan Mingguan</h3>
-              <p className="text-body-sm text-ink-muted">Ringkasan progres, kekuatan, area perbaikan & proyeksi skor hari-H dari data nyatamu.</p>
+              <h3 className="text-h-sm text-ink">{t(locale, "intel.weekly")}</h3>
+              <p className="text-body-sm text-ink-muted">{t(locale, "intel.weekly.desc")}</p>
             </div>
           </div>
           <div className="mt-4"><Suspense><AiReportButton /></Suspense></div>
@@ -131,7 +133,7 @@ export default async function Page() {
         {/* ROW 1 — top metrics */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <Head title="Academic Health Score" />
+            <Head title={t(locale, "intel.health")} />
             <div className="flex items-center gap-4">
               <Ring value={82} size={96} stroke={10} color="#2F5BFF">
                 <span className="text-[1.65rem] font-extrabold leading-none text-ink">82</span>
@@ -147,14 +149,14 @@ export default async function Page() {
           </Card>
 
           <Card>
-            <Head title="Growth Trend" />
+            <Head title={t(locale, "intel.growth")} />
             <div className="text-[2rem] font-extrabold leading-none text-[#16B47A]">+14%</div>
             <div className="mt-1 text-caption text-ink-muted">30 hari terakhir</div>
             <GrowthSparkline />
           </Card>
 
           <Card>
-            <Head title="Learning Consistency" />
+            <Head title={t(locale, "intel.consistency")} />
             <div className="text-[2rem] font-extrabold leading-none text-brand">87%</div>
             <div className="mt-1 text-caption text-ink-muted">Sangat Konsisten</div>
             <ConsistencyBars />
@@ -162,7 +164,7 @@ export default async function Page() {
           </Card>
 
           <Card>
-            <Head title="Target Readiness" />
+            <Head title={t(locale, "intel.readiness")} />
             <div className="text-caption text-ink-muted">
               Target: <span className="font-semibold text-ink">UGM - Teknik Informatika</span>
             </div>
@@ -181,7 +183,7 @@ export default async function Page() {
         {/* ROW 2 — Academic DNA + Kekuatan/Area */}
         <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr_1fr]">
           <Card>
-            <Head title="Academic DNA" />
+            <Head title={t(locale, "intel.dna")} />
             <div className="flex flex-col items-center gap-4 sm:flex-row">
               <div className="w-full max-w-[260px] shrink-0">
                 <RadarChart axes={DNA_AXES} series={[{ values: DNA_AXES.map((a) => a.value), color: "#2F5BFF", fill: true }]} size={260} />
@@ -202,7 +204,7 @@ export default async function Page() {
           <Card>
             <div className="mb-3 flex items-center gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E9F9F1] text-[#16B47A]"><Zap size={18} /></span>
-              <h2 className="text-h-sm text-ink">Kekuatan Utama</h2>
+              <h2 className="text-h-sm text-ink">{t(locale, "intel.strengths")}</h2>
             </div>
             <div className="space-y-3.5">
               {STRENGTHS.map((s) => (
@@ -223,7 +225,7 @@ export default async function Page() {
           <Card>
             <div className="mb-3 flex items-center gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FFF1DC] text-[#E8910B]"><Target size={18} /></span>
-              <h2 className="text-h-sm text-ink">Area Perbaikan</h2>
+              <h2 className="text-h-sm text-ink">{t(locale, "intel.improvements")}</h2>
             </div>
             <div className="space-y-3.5">
               {IMPROVEMENTS.map((s) => (
@@ -245,7 +247,7 @@ export default async function Page() {
         {/* ROW 3 — Progress Intelligence + insights */}
         <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
           <Card>
-            <Head title="Progress Intelligence" />
+            <Head title={t(locale, "intel.progress")} />
             <div className="flex flex-col gap-5 lg:flex-row">
               <div className="flex-1">
                 <div className="mb-2 flex flex-wrap gap-4 text-caption text-ink-muted">
@@ -316,8 +318,8 @@ export default async function Page() {
 
         {/* ROW 4 — Intelligence Actions */}
         <div>
-          <h2 className="text-h-sm text-ink">Intelligence Actions</h2>
-          <p className="mt-1 text-body-sm text-ink-muted">Pilih analisis yang ingin kamu dalami lebih lanjut.</p>
+          <h2 className="text-h-sm text-ink">{t(locale, "intel.actions")}</h2>
+          <p className="mt-1 text-body-sm text-ink-muted">{t(locale, "intel.actions.desc")}</p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {ACTIONS.map((a) => {
               const Icon = a.icon;

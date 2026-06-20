@@ -6,12 +6,14 @@ import {
 import { getPortalProfile } from "@/lib/portal/session";
 import { PortalTopbar } from "@/components/portal/topbar";
 import { Monogram } from "@/components/common/monogram";
+import { getLocale, t } from "@/lib/i18n";
 import { LogoutButton } from "@/components/portal/logout-button";
 
 export const metadata = { title: "Profil — Albirru" };
 
 export default async function ProfilPage() {
   const { user, profile } = await getPortalProfile();
+  const locale = await getLocale();
   const nama = profile?.nama ?? "Farhan";
   const role = profile?.role ?? "siswa";
   const isStaf = role === "staf" || role === "admin";
@@ -22,33 +24,33 @@ export default async function ProfilPage() {
   const isPro = (profile?.plan ?? "free") !== "free";
 
   const identitasSiswa: { icon: typeof Mail; label: string; value: string }[] = [
-    { icon: Mail, label: "Email", value: user?.email ?? "-" },
-    { icon: GraduationCap, label: "Jenjang", value: profile?.jenjang ? `Kelas ${profile.jenjang}` : "-" },
-    { icon: School, label: "Asal Sekolah", value: profile?.asal_sekolah ?? "-" },
-    { icon: Target, label: "Target", value: target || "Belum diatur" },
+    { icon: Mail, label: t(locale, "profil.email"), value: user?.email ?? "-" },
+    { icon: GraduationCap, label: t(locale, "profil.jenjang"), value: profile?.jenjang ? `Kelas ${profile.jenjang}` : "-" },
+    { icon: School, label: t(locale, "profil.sekolah"), value: profile?.asal_sekolah ?? "-" },
+    { icon: Target, label: t(locale, "profil.target"), value: target || t(locale, "common.notset") },
   ];
 
   const identitasStaf: { icon: typeof Mail; label: string; value: string }[] = [
-    { icon: Mail, label: "Email", value: user?.email ?? "-" },
-    { icon: Shield, label: "Role", value: role === "admin" ? "Administrator" : "Tenaga Pengajar" },
-    { icon: School, label: "Institusi", value: profile?.asal_sekolah ?? "-" },
+    { icon: Mail, label: t(locale, "profil.email"), value: user?.email ?? "-" },
+    { icon: Shield, label: t(locale, "profil.role"), value: role === "admin" ? "Administrator" : "Tenaga Pengajar" },
+    { icon: School, label: t(locale, "profil.institusi"), value: profile?.asal_sekolah ?? "-" },
   ];
 
   const identitas = isStaf ? identitasStaf : identitasSiswa;
 
   const settingsSiswa = [
-    { icon: Bell, label: "Notifikasi", desc: "Atur preferensi pemberitahuan", href: "/app/notifikasi" },
-    { icon: Shield, label: "Keamanan & Kata Sandi", desc: "Ubah kata sandi & keamanan akun", href: "/app/profil/keamanan" },
-    { icon: Gem, label: "Langganan", desc: "Kelola paket Albirru-mu", href: "/app/profil/langganan" },
-    { icon: Award, label: "Pencapaian", desc: "Lihat badge dan progres XP", href: "/app/achievement" },
+    { icon: Bell, label: t(locale, "profil.notif"), desc: t(locale, "profil.notif.desc"), href: "/app/notifikasi" },
+    { icon: Shield, label: t(locale, "profil.security"), desc: t(locale, "profil.security.desc"), href: "/app/profil/keamanan" },
+    { icon: Gem, label: t(locale, "profil.langganan"), desc: t(locale, "profil.langganan.desc"), href: "/app/profil/langganan" },
+    { icon: Award, label: t(locale, "profil.achievement"), desc: t(locale, "profil.achievement.desc"), href: "/app/achievement" },
   ];
 
   const settingsStaf = [
-    { icon: Users, label: "Manajemen Siswa", desc: "Kelola daftar dan data siswa", href: "/staf/siswa" },
-    { icon: BookOpen, label: "Materi & Konten", desc: "Upload dan kelola materi ajar", href: "/staf/materi" },
-    { icon: ClipboardList, label: "Try Out & Penugasan", desc: "Buat dan pantau try out", href: "/staf/try-out" },
-    { icon: Shield, label: "Keamanan", desc: "Ubah kata sandi & keamanan akun", href: "/app/profil/keamanan" },
-    ...(role === "admin" ? [{ icon: Settings, label: "Panel Admin", desc: "Kelola pengguna dan konfigurasi sistem", href: "/admin" }] : []),
+    { icon: Users, label: t(locale, "profil.siswa"), desc: t(locale, "profil.siswa.desc"), href: "/staf/siswa" },
+    { icon: BookOpen, label: t(locale, "profil.materi"), desc: t(locale, "profil.materi.desc"), href: "/staf/materi" },
+    { icon: ClipboardList, label: t(locale, "profil.tryout"), desc: t(locale, "profil.tryout.desc"), href: "/staf/try-out" },
+    { icon: Shield, label: t(locale, "profil.security"), desc: t(locale, "profil.security.desc"), href: "/app/profil/keamanan" },
+    ...(role === "admin" ? [{ icon: Settings, label: t(locale, "profil.admin"), desc: t(locale, "profil.admin.desc"), href: "/admin" }] : []),
   ];
 
   const settings = isStaf ? settingsStaf : settingsSiswa;
@@ -56,9 +58,10 @@ export default async function ProfilPage() {
   return (
     <>
       <PortalTopbar
-        title="Profil"
-        subtitle={isStaf ? `Portal ${role === "admin" ? "Administrator" : "Tenaga Pengajar"} — kelola akun dan akses konsolmu.` : "Kelola akun dan preferensimu."}
+        title={t(locale, "profil.title")}
+        subtitle={isStaf ? t(locale, "profil.subtitle.staf") : t(locale, "profil.subtitle")}
         nama={nama}
+        role={role}
         right={<LogoutButton />}
       />
 
@@ -81,12 +84,12 @@ export default async function ProfilPage() {
               </div>
               <p className="mt-0.5 text-body-sm text-ink-muted">{user?.email}</p>
             </div>
-            <Link href="/app/profil/edit" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink transition-colors hover:bg-muted"><Pencil size={15} /> Edit Profil</Link>
+            <Link href="/app/profil/edit" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink transition-colors hover:bg-muted"><Pencil size={15} /> {t(locale, "profil.edit")}</Link>
           </div>
 
           {/* IDENTITAS */}
           <div className="rounded-2xl border bg-white p-5">
-            <h3 className="text-h-sm text-ink">Informasi Akun</h3>
+            <h3 className="text-h-sm text-ink">{t(locale, "profil.info")}</h3>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {identitas.map((i) => {
                 const Icon = i.icon;
@@ -102,7 +105,7 @@ export default async function ProfilPage() {
 
           {/* PENGATURAN */}
           <div className="rounded-2xl border bg-white p-5">
-            <h3 className="text-h-sm text-ink">{isStaf ? "Akses Cepat" : "Pengaturan"}</h3>
+            <h3 className="text-h-sm text-ink">{isStaf ? t(locale, "profil.settings.staf") : t(locale, "profil.settings")}</h3>
             <div className="mt-3 divide-y">
               {settings.map((s) => {
                 const Icon = s.icon;
@@ -147,7 +150,7 @@ export default async function ProfilPage() {
 
           {!isStaf && (
             <div className="rounded-2xl border bg-white p-5">
-              <h3 className="text-body-lg font-bold text-ink">Statistik Singkat</h3>
+              <h3 className="text-body-lg font-bold text-ink">{t(locale, "profil.stats")}</h3>
               <div className="mt-3 space-y-3 text-body-sm">
                 {[["Try Out Diikuti", "12"], ["Skor Tertinggi", "780"], ["Streak Belajar", "41 hari"]].map((r) => (
                   <div key={r[0]} className="flex items-center justify-between"><span className="text-ink-muted">{r[0]}</span><span className="font-bold text-ink">{r[1]}</span></div>
