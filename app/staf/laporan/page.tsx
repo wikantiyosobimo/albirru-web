@@ -1,8 +1,9 @@
-import { BarChart3, Download, Users, ClipboardList, TrendingUp, FileText } from "lucide-react";
+import { BarChart3, Users, ClipboardList, TrendingUp, FileText } from "lucide-react";
 import { requireStaff } from "@/lib/portal/roles";
 import { getStafOverview } from "@/lib/console/data";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { StatCard, ConsoleCard } from "@/components/console/ui";
+import { ExportButtons } from "@/components/staf/export-buttons";
 
 export const metadata = { title: "Laporan — Staf Albirru" };
 
@@ -11,10 +12,10 @@ export default async function StafLaporanPage() {
   const ov = await getStafOverview();
 
   const laporan = [
-    { judul: "Rekap Performa Siswa", desc: "Skor & akurasi seluruh siswa", icon: Users, fmt: "CSV" },
-    { judul: "Hasil Try Out per Paket", desc: "Peringkat & distribusi skor", icon: ClipboardList, fmt: "CSV" },
-    { judul: "Analisis Topik Lemah", desc: "Agregat weakness per kelas", icon: TrendingUp, fmt: "PDF" },
-    { judul: "Progres Pembelajaran", desc: "Penyelesaian materi per siswa", icon: FileText, fmt: "CSV" },
+    { key: "performa", judul: "Rekap Performa Siswa", desc: "Skor & akurasi seluruh siswa", icon: Users },
+    { key: "tryout", judul: "Hasil Try Out per Paket", desc: "Peringkat & distribusi skor", icon: ClipboardList },
+    { key: "topik", judul: "Analisis Topik Lemah", desc: "Agregat weakness per kelas", icon: TrendingUp },
+    { key: "progres", judul: "Progres Pembelajaran", desc: "Penyelesaian materi per siswa", icon: FileText },
   ];
 
   return (
@@ -31,14 +32,13 @@ export default async function StafLaporanPage() {
         <ConsoleCard title="Unduh Laporan">
           <div className="grid gap-4 sm:grid-cols-2">
             {laporan.map((l) => { const Icon = l.icon; return (
-              <div key={l.judul} className="flex items-center gap-4 rounded-xl border bg-white p-4">
+              <div key={l.key} className="flex items-center gap-4 rounded-xl border bg-white p-4">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand"><Icon size={20} /></span>
                 <div className="min-w-0 flex-1"><div className="text-body-sm font-semibold text-ink">{l.judul}</div><div className="text-caption text-ink-muted">{l.desc}</div></div>
-                <button className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-body-sm font-semibold text-ink hover:bg-muted"><Download size={14} /> {l.fmt}</button>
+                <ExportButtons reportKey={l.key} />
               </div>
             ); })}
           </div>
-          <p className="mt-4 text-caption text-ink-muted">Ekspor PDF/CSV memakai feature flag <code className="rounded bg-muted px-1">pdf_export</code> (Fase quick-win).</p>
         </ConsoleCard>
       </div>
     </>

@@ -78,6 +78,35 @@ export async function createAssignment(formData: FormData): Promise<{ ok: boolea
   }
 }
 
+// Buat paket try out baru (staf/admin).
+export async function createTryOut(formData: FormData): Promise<{ ok: boolean; error?: string }> {
+  const { user, profile } = await getPortalProfile();
+  if (profile?.role !== "staf" && profile?.role !== "admin") return { ok: false, error: "Tidak berwenang." };
+
+  const judul = String(formData.get("judul") ?? "").trim();
+  const tipe = String(formData.get("tipe") ?? "SNBT");
+  const durasi = Number(formData.get("durasi") ?? 100) || 100;
+  const jumlahSoal = Number(formData.get("jumlah_soal") ?? 20) || 20;
+  const harga = Number(formData.get("harga") ?? 0) || 0;
+  if (!judul) return { ok: false, error: "Judul wajib diisi." };
+
+  const slug = judul.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || `tryout-${Date.now()}`;
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.from("tryouts").insert({
+      judul, slug, tipe, durasi_menit: durasi,
+      jumlah_soal: jumlahSoal, harga, status: "draft",
+      dibuat_oleh: user?.id,
+    });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/staf/try-out");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal menyimpan." };
+  }
+}
+
 // Ubah role pengguna (admin) via RPC ber-audit.
 export async function setUserRole(userId: string, role: string): Promise<{ ok: boolean; error?: string }> {
   const { profile } = await getPortalProfile();
