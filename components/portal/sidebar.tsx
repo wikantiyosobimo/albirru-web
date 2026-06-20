@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home, ClipboardList, BarChart3, Compass, GraduationCap, Route, Library, Trophy,
-  Bookmark, Bell, User, Gem, ArrowRight, LifeBuoy, ChevronRight, ChevronLeft, X, PanelLeft,
+  Bookmark, Bell, User, Gem, ArrowRight, LifeBuoy, ChevronRight, ChevronLeft, X, PanelLeft, LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UpgradeProButton } from "@/components/portal/upgrade-pro-button";
+import { createClient } from "@/lib/supabase/client";
 import { getClientLocale, tc } from "@/lib/i18n-client";
 import type { DictKey } from "@/lib/i18n";
 
@@ -104,8 +105,27 @@ function SidebarBody({ pathname, collapsed, plan, onNavigate, onToggleCollapse, 
           {!collapsed ? <span className="flex-1 text-caption leading-tight">{tc(locale, "nav.help")}<br /><span className="text-white/50">{tc(locale, "nav.help.sub")}</span></span> : null}
           {!collapsed ? <ChevronRight size={15} /> : null}
         </Link>
+
+        <SidebarLogout collapsed={collapsed} />
       </div>
     </div>
+  );
+}
+
+function SidebarLogout({ collapsed }: { collapsed: boolean }) {
+  const [busy, setBusy] = useState(false);
+  async function onLogout() {
+    setBusy(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/masuk";
+  }
+  return (
+    <button onClick={onLogout} disabled={busy} title={collapsed ? "Keluar" : undefined}
+      className={cn("flex w-full items-center rounded-lg py-2 text-white/70 hover:bg-white/5 hover:text-[#E5484D]", collapsed ? "justify-center" : "gap-2.5 px-3")}>
+      <LogOut size={18} className="shrink-0" />
+      {!collapsed ? <span className="flex-1 text-left text-body-sm">{busy ? "Keluar…" : "Keluar"}</span> : null}
+    </button>
   );
 }
 
