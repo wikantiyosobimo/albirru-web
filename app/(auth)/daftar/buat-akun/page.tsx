@@ -44,7 +44,7 @@ export default function BuatAkunPage({ searchParams }: { searchParams: { peran?:
         <AuthDivider label="atau daftar dengan" />
       </div>
       <div className="mt-4">
-        <GoogleButton label="Daftar dengan Google" />
+        <GoogleButton label="Daftar dengan Google" peran={peran} />
       </div>
       <div className="mt-6 flex items-center justify-center gap-2">
         <Lock size={14} className="text-ink-muted" />

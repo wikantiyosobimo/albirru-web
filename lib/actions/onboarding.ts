@@ -34,5 +34,15 @@ export async function completeOnboarding(_prev: OnboardingState, formData: FormD
     .eq("id", user.id);
 
   if (error) return { error: "Gagal menyimpan. Silakan coba lagi." };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const role = profile?.role ?? "siswa";
+  if (role === "admin") redirect("/admin");
+  if (role === "staf") redirect("/staf");
   redirect("/app");
 }

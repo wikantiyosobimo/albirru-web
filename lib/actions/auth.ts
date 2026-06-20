@@ -13,8 +13,18 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
   if (!email || !password) return { error: "Email dan kata sandi wajib diisi." };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error, data } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: "Email atau kata sandi salah." };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .single();
+
+  const role = profile?.role ?? "siswa";
+  if (role === "admin") redirect("/admin");
+  if (role === "staf") redirect("/staf");
   redirect("/app");
 }
 
