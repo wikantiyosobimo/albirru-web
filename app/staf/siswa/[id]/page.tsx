@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Trophy, ClipboardList, Target, TrendingUp } from "lucide-react";
+import { ArrowLeft, Trophy, ClipboardList, Target, TrendingUp, FileText } from "lucide-react";
 import { requireStaff } from "@/lib/portal/roles";
 import { getAdminUserDetail } from "@/lib/console/data";
 import { ConsoleTopbar } from "@/components/console/topbar";
@@ -18,7 +18,10 @@ export default async function StafSiswaDetail({ params }: { params: { id: string
   return (
     <>
       <ConsoleTopbar eyebrow="Akademik  ›  Siswa" title={nama} subtitle="Profil read-only — intelligence & riwayat." nama={profile?.nama ?? "Tim"} roleLabel="Staf"
-        right={<Link href="/staf/siswa" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink hover:bg-muted"><ArrowLeft size={15} /> Kembali</Link>} />
+        right={<div className="flex gap-2">
+          <Link href={`/staf/siswa/${params.id}/report`} className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-body-sm font-semibold text-white hover:bg-brand-600"><FileText size={15} /> Lihat Report</Link>
+          <Link href="/staf/siswa" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink hover:bg-muted"><ArrowLeft size={15} /> Kembali</Link>
+        </div>} />
 
       <div className="space-y-5 p-5 lg:p-7">
         {!p ? (
