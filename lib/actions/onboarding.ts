@@ -46,3 +46,24 @@ export async function completeOnboarding(_prev: OnboardingState, formData: FormD
   if (role === "staf") redirect("/staf");
   redirect("/app");
 }
+
+export async function completeStafOnboarding(_prev: OnboardingState, formData: FormData): Promise<OnboardingState> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/masuk");
+
+  const asal_sekolah = String(formData.get("asal_sekolah") ?? "").trim();
+  if (!asal_sekolah) return { error: "Nama institusi wajib diisi." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ asal_sekolah, onboarding_done: true })
+    .eq("id", user.id);
+
+  if (error) return { error: "Gagal menyimpan. Silakan coba lagi." };
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const role = profile?.role ?? "staf";
+  if (role === "admin") redirect("/admin");
+  redirect("/staf");
+}
