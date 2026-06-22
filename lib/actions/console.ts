@@ -95,7 +95,7 @@ export async function createTryOut(formData: FormData): Promise<{ ok: boolean; e
   try {
     const supabase = await createClient();
     const { error } = await supabase.from("tryouts").insert({
-      judul, slug, tipe, durasi_menit: durasi,
+      id: slug, title: judul, slug, tipe, durasi_menit: durasi,
       jumlah_soal: jumlahSoal, harga, status: "draft",
       dibuat_oleh: user?.id,
     });

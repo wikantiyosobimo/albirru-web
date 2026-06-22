@@ -6,8 +6,34 @@ import {
   Pause, Play, Calendar, Clock, FileText, ArrowRight, ArrowLeft, Bookmark,
   Flag, AlertTriangle, CheckCircle2, XCircle, ChevronDown, ChevronUp, Send, X, Loader2,
 } from "lucide-react";
-import { PortalTopbar } from "@/components/portal/topbar";
+import { Monogram } from "@/components/common/monogram";
+import { SidebarToggle } from "@/components/portal/sidebar-toggle";
 import { cn } from "@/lib/utils";
+
+function ExamTopbar({ eyebrow, title, nama, right }: { eyebrow?: string; title: string; nama: string; right?: React.ReactNode }) {
+  return (
+    <header className="sticky top-0 z-30 border-b bg-white/90 backdrop-blur">
+      <div className="flex items-center justify-between gap-4 px-5 py-3.5 lg:px-7">
+        <div className="flex min-w-0 items-center gap-3">
+          <SidebarToggle />
+          <div className="min-w-0">
+            {eyebrow ? <div className="text-body-sm text-ink-body">{eyebrow}</div> : null}
+            <h1 className="truncate text-h-md text-ink">{title}</h1>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 lg:gap-4">
+          {right}
+          <div className="flex items-center gap-2.5">
+            <Monogram label={(nama[0] ?? "S").toUpperCase()} size={38} />
+            <div className="hidden leading-tight sm:block">
+              <div className="text-body-sm font-semibold text-ink">{nama}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 export type EngineSoal = {
   id: string;
@@ -106,7 +132,7 @@ export function ExamEngine({
   if (total === 0) {
     return (
       <>
-        <PortalTopbar eyebrow="Try Out  ›  Pengerjaan" title={judul} nama={nama} />
+        <ExamTopbar eyebrow="Try Out  ›  Pengerjaan" title={judul} nama={nama} />
         <div className="p-5 lg:p-7">
           <div className="mx-auto max-w-md rounded-2xl border bg-white p-10 text-center">
             <FileText className="mx-auto text-ink-muted" size={36} />
@@ -139,7 +165,7 @@ export function ExamEngine({
 
   return (
     <>
-      <PortalTopbar
+      <ExamTopbar
         eyebrow="Try Out  ›  Pengerjaan Try Out"
         title={judul}
         nama={nama}

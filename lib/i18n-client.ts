@@ -1,6 +1,6 @@
 "use client";
 
-import { DICT, type Locale, type DictKey } from "@/lib/i18n";
+import { DICT, type Locale, type DictKey } from "@/lib/i18n-dict";
 
 export function getClientLocale(): Locale {
   if (typeof document === "undefined") return "id";

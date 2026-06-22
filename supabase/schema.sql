@@ -31,7 +31,7 @@ create index if not exists leads_created_at_idx on public.leads (created_at desc
 -- ============================================================
 create table if not exists public.profiles (
   id         uuid primary key references auth.users(id) on delete cascade,
-  role       text not null default 'siswa' check (role in ('siswa','staf')),
+  role       text not null default 'siswa' check (role in ('siswa','staf','admin')),
   nama       text,
   plan       text not null default 'free' check (plan in ('free','pro','siswa_albirru')),
   created_at timestamptz not null default now()
@@ -58,7 +58,11 @@ begin
   insert into public.profiles (id, role, nama)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data ->> 'role', 'siswa'),
+    CASE
+      WHEN new.raw_user_meta_data ->> 'role' IN ('siswa','staf','admin')
+      THEN new.raw_user_meta_data ->> 'role'
+      ELSE 'siswa'
+    END,
     new.raw_user_meta_data ->> 'nama'
   );
   return new;
