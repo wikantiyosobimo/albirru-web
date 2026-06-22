@@ -2,7 +2,7 @@
 
 import {
   LayoutDashboard, Users, Database, FolderTree, LayoutTemplate, ClipboardList,
-  School, CreditCard, TrendingUp, Languages, Settings, Activity,
+  School, CreditCard, TrendingUp, Settings, Activity,
 } from "lucide-react";
 import { ConsoleSidebar, type ConsoleNavGroup } from "@/components/console/sidebar";
 
@@ -29,7 +29,6 @@ const GROUPS: ConsoleNavGroup[] = [
   {
     title: "Sistem",
     items: [
-      { label: "i18n", href: "/admin/i18n", icon: Languages },
       { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
       { label: "Monitoring", href: "/admin/monitoring", icon: Activity },
     ],

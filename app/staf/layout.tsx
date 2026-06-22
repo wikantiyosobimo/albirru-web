@@ -6,7 +6,9 @@ export default async function StafLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex min-h-screen bg-muted">
       <StafSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col">{children}</div>
+      </div>
     </div>
   );
 }

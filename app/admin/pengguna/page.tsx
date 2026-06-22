@@ -42,24 +42,45 @@ export default async function AdminPenggunaPage({ searchParams }: { searchParams
         {users.length === 0 ? (
           <EmptyState icon={Users} title="Tidak ada pengguna" note={q ? `Tidak ada hasil untuk "${q}".` : "Belum ada pengguna terdaftar."} />
         ) : (
-          <div className="overflow-hidden rounded-2xl border bg-white">
-            <table className="w-full text-left text-body-sm">
-              <thead className="border-b bg-muted/50 text-caption uppercase tracking-wide text-ink-muted">
-                <tr><th className="px-5 py-3 font-semibold">Nama</th><th className="px-5 py-3 font-semibold">Role</th><th className="hidden px-5 py-3 font-semibold sm:table-cell">Plan</th><th className="hidden px-5 py-3 font-semibold md:table-cell">Daftar</th><th className="px-5 py-3" /></tr>
-              </thead>
-              <tbody className="divide-y">
-                {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-muted/40">
-                    <td className="px-5 py-3"><div className="flex items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-caption font-bold text-brand">{(u.nama?.[0] ?? "U").toUpperCase()}</span><span className="font-semibold text-ink">{u.nama ?? "Tanpa nama"}</span></div></td>
-                    <td className="px-5 py-3"><Pill tone={roleTone(u.role)}>{u.role}</Pill></td>
-                    <td className="hidden px-5 py-3 sm:table-cell">{u.plan !== "free" ? <Pill tone="warning">{u.plan}</Pill> : <Pill>free</Pill>}</td>
-                    <td className="hidden px-5 py-3 text-ink-body md:table-cell">{new Date(u.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</td>
-                    <td className="px-5 py-3 text-right"><Link href={`/admin/pengguna/${u.id}`} className="inline-flex items-center gap-1 text-body-sm font-semibold text-brand hover:underline">Detail <ChevronRight size={14} /></Link></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Mobile: kartu (semua data tetap terlihat, tak ada kolom disembunyikan) */}
+            <div className="grid gap-3 sm:hidden">
+              {users.map((u) => (
+                <Link key={u.id} href={`/admin/pengguna/${u.id}`} className="flex items-center gap-3 rounded-2xl border bg-white p-4 active:bg-muted/40">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-body-sm font-bold text-brand">{(u.nama?.[0] ?? "U").toUpperCase()}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-semibold text-ink">{u.nama ?? "Tanpa nama"}</div>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <Pill tone={roleTone(u.role)}>{u.role}</Pill>
+                      {u.plan !== "free" ? <Pill tone="warning">{u.plan}</Pill> : <Pill>free</Pill>}
+                      <span className="text-caption text-ink-muted">{new Date(u.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="shrink-0 text-ink-muted" />
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop: tabel */}
+            <div className="hidden overflow-hidden rounded-2xl border bg-white sm:block">
+              <table className="w-full text-left text-body-sm">
+                <thead className="border-b bg-muted/50 text-caption uppercase tracking-wide text-ink-muted">
+                  <tr><th className="px-5 py-3 font-semibold">Nama</th><th className="px-5 py-3 font-semibold">Role</th><th className="px-5 py-3 font-semibold">Plan</th><th className="hidden px-5 py-3 font-semibold md:table-cell">Daftar</th><th className="px-5 py-3" /></tr>
+                </thead>
+                <tbody className="divide-y">
+                  {users.map((u) => (
+                    <tr key={u.id} className="hover:bg-muted/40">
+                      <td className="px-5 py-3"><div className="flex items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-caption font-bold text-brand">{(u.nama?.[0] ?? "U").toUpperCase()}</span><span className="font-semibold text-ink">{u.nama ?? "Tanpa nama"}</span></div></td>
+                      <td className="px-5 py-3"><Pill tone={roleTone(u.role)}>{u.role}</Pill></td>
+                      <td className="px-5 py-3">{u.plan !== "free" ? <Pill tone="warning">{u.plan}</Pill> : <Pill>free</Pill>}</td>
+                      <td className="hidden px-5 py-3 text-ink-body md:table-cell">{new Date(u.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</td>
+                      <td className="px-5 py-3 text-right"><Link href={`/admin/pengguna/${u.id}`} className="inline-flex items-center gap-1 text-body-sm font-semibold text-brand hover:underline">Detail <ChevronRight size={14} /></Link></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </>

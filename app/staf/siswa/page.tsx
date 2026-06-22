@@ -25,7 +25,27 @@ export default async function StafSiswaPage({ searchParams }: { searchParams: { 
         {students.length === 0 ? (
           <EmptyState icon={Users} title="Belum ada siswa" note={q ? `Tidak ada hasil untuk "${q}".` : "Siswa akan muncul setelah mendaftar & onboarding."} />
         ) : (
-          <div className="overflow-hidden rounded-2xl border bg-white">
+          <>
+          {/* Mobile: kartu (tap besar, semua data inti terlihat) */}
+          <div className="grid gap-3 sm:hidden">
+            {students.map((s) => (
+              <Link key={s.id} href={`/staf/siswa/${s.id}`} className="flex items-center gap-3 rounded-2xl border bg-white p-4 active:bg-muted/40">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-body-sm font-bold text-brand">{(s.nama?.[0] ?? "S").toUpperCase()}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-semibold text-ink">{s.nama ?? "Tanpa nama"}</div>
+                  <div className="mt-0.5 truncate text-caption text-ink-muted">{s.asal_sekolah ?? "—"} · {s.jumlah_tryout}× TO</div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <div className="text-body-lg font-bold text-ink">{s.skor_terakhir ?? "—"}</div>
+                  <div className="text-caption text-ink-muted">skor</div>
+                </div>
+                <ChevronRight size={18} className="shrink-0 text-ink-muted" />
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop: tabel */}
+          <div className="hidden overflow-hidden rounded-2xl border bg-white sm:block">
             <table className="w-full text-left text-body-sm">
               <thead className="border-b bg-muted/50 text-caption uppercase tracking-wide text-ink-muted">
                 <tr>
@@ -59,6 +79,7 @@ export default async function StafSiswaPage({ searchParams }: { searchParams: { 
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
     </>

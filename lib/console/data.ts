@@ -35,6 +35,12 @@ export type AdminAnalytics = {
   plan: { plan: string; jml: number }[];
   segment: { segment: string; jml: number }[];
 };
+export type AdminContentHealth = {
+  total: number; aktif: number; nonaktif: number; tanpa_pembahasan: number; tanpa_topik: number;
+  per_mapel: { mapel: string; total: number; aktif: number }[];
+  per_level: { level: number; jml: number }[];
+};
+export type AdminFunnel = { siswa: number; aktivasi: number; pro: number; pendapatan: number };
 
 export const getStafOverview = () => rpc<StafOverview>("staf_overview", {}, { total_siswa: 0, total_attempt: 0, rata_skor: null, total_materi: 0, total_tryout: 0 });
 export const getStafStudents = (search?: string) => rpc<StudentRow[]>("staf_list_students", { p_search: search ?? null }, []);
@@ -42,3 +48,5 @@ export const getAdminOverview = () => rpc<AdminOverview>("admin_overview", {}, {
 export const getAdminUsers = (search?: string, role?: string) => rpc<UserRow[]>("admin_list_users", { p_search: search ?? null, p_role: role ?? null }, []);
 export const getAdminUserDetail = (id: string) => rpc<{ profile: Record<string, unknown> | null; tryout: { tryout_id: string; skor: number; benar: number; salah: number; kosong: number; submitted_at: string }[]; xp: number; level: number }>("admin_user_detail", { p_id: id }, { profile: null, tryout: [], xp: 0, level: 1 });
 export const getAdminAnalytics = () => rpc<AdminAnalytics>("admin_analytics", {}, { signup: [], plan: [], segment: [] });
+export const getAdminContentHealth = () => rpc<AdminContentHealth>("admin_content_health", {}, { total: 0, aktif: 0, nonaktif: 0, tanpa_pembahasan: 0, tanpa_topik: 0, per_mapel: [], per_level: [] });
+export const getAdminConversionFunnel = () => rpc<AdminFunnel>("admin_conversion_funnel", {}, { siswa: 0, aktivasi: 0, pro: 0, pendapatan: 0 });
