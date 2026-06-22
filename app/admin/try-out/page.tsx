@@ -1,8 +1,9 @@
-import { ClipboardList, Plus, Clock } from "lucide-react";
+import { ClipboardList, Clock } from "lucide-react";
 import { requireAdmin } from "@/lib/portal/roles";
 import { createClient } from "@/lib/supabase/server";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { StatCard, ConsoleCard, EmptyState, Pill } from "@/components/console/ui";
+import { NewTryOutButton } from "@/components/admin/admin-actions";
 
 export const metadata = { title: "Try Out — Admin Albirru" };
 
@@ -24,7 +25,7 @@ export default async function AdminTryOutPage() {
   return (
     <>
       <ConsoleTopbar eyebrow="Konten" title="Semua Try Out" subtitle="Kelola paket lintas sekolah." nama={profile?.nama ?? "Admin"} roleLabel="Admin"
-        right={<button className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-body-sm font-semibold text-white hover:bg-brand-600"><Plus size={15} /> Paket Baru</button>} />
+        right={<NewTryOutButton />} />
 
       <div className="space-y-5 p-5 lg:p-7">
         <div className="grid gap-5 sm:grid-cols-3">

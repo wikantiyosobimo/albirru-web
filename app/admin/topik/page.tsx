@@ -1,8 +1,9 @@
-import { FolderTree, Plus } from "lucide-react";
+import { FolderTree } from "lucide-react";
 import { requireAdmin } from "@/lib/portal/roles";
 import { createClient } from "@/lib/supabase/server";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { ConsoleCard, EmptyState, Pill } from "@/components/console/ui";
+import { NewTopicButton } from "@/components/admin/admin-actions";
 
 export const metadata = { title: "Topik — Admin Albirru" };
 
@@ -23,7 +24,7 @@ export default async function AdminTopikPage() {
   return (
     <>
       <ConsoleTopbar eyebrow="Konten" title="Taksonomi Topik" subtitle={`${topics.length} topik di ${Object.keys(byMapel).length} mapel.`} nama={profile?.nama ?? "Admin"} roleLabel="Admin"
-        right={<button className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-body-sm font-semibold text-white hover:bg-brand-600"><Plus size={15} /> Tambah Topik</button>} />
+        right={<NewTopicButton />} />
 
       <div className="p-5 lg:p-7">
         {topics.length === 0 ? (

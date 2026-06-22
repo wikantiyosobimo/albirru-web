@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight, X, PanelLeft, LogOut, ArrowLeft, type LucideIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, PanelLeft, LogOut, type LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -70,10 +70,6 @@ function Body({ pathname, collapsed, groups, brand, subtitle, rootHref, onNaviga
       </nav>
 
       <div className={cn("space-y-1 border-t border-white/10", collapsed ? "p-2" : "p-3")}>
-        <Link href="/app" onClick={onNavigate} title={collapsed ? "Kembali ke portal siswa" : undefined} className={cn("flex items-center rounded-lg py-2 text-white/70 hover:bg-white/5 hover:text-white", collapsed ? "justify-center" : "gap-2.5 px-3")}>
-          <ArrowLeft size={18} className="shrink-0" />
-          {!collapsed ? <span className="flex-1 text-body-sm">Portal Siswa</span> : null}
-        </Link>
         <LogoutLink collapsed={collapsed} />
       </div>
     </div>

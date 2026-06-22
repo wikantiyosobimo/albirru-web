@@ -17,9 +17,11 @@ export default async function OnboardingPage() {
     .eq("id", user.id)
     .single();
 
+  // Admin tidak perlu onboarding — langsung ke konsol.
+  if (profile?.role === "admin") redirect("/admin");
+
   if (profile?.onboarding_done) {
     const role = profile.role ?? "siswa";
-    if (role === "admin") redirect("/admin");
     if (role === "staf") redirect("/staf");
     redirect("/app");
   }

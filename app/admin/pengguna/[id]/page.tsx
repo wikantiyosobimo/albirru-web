@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowLeft, Shield, Trophy, ClipboardList, Mail } from "lucide-react";
+import { ArrowLeft, Shield, Trophy, ClipboardList } from "lucide-react";
 import { requireAdmin } from "@/lib/portal/roles";
 import { getAdminUserDetail } from "@/lib/console/data";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { StatCard, ConsoleCard, EmptyState, Pill } from "@/components/console/ui";
 import { RoleSelect } from "@/components/admin/role-select";
+import { ResetPasswordButton } from "@/components/admin/admin-actions";
 
 export const metadata = { title: "Detail Pengguna — Admin Albirru" };
 
@@ -53,7 +54,7 @@ export default async function AdminUserDetail({ params }: { params: { id: string
                   </div>
                 </ConsoleCard>
                 <ConsoleCard title="Aksi">
-                  <button className="flex w-full items-center gap-2 rounded-lg border px-4 py-2.5 text-body-sm font-semibold text-ink hover:bg-muted"><Mail size={15} /> Kirim Email Reset Password</button>
+                  <ResetPasswordButton email={(p.email as string) ?? null} />
                 </ConsoleCard>
               </div>
             </div>

@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Database, Upload, Plus, Filter } from "lucide-react";
+import { Database, Upload, Filter } from "lucide-react";
 import { requireAdmin } from "@/lib/portal/roles";
 import { createClient } from "@/lib/supabase/server";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { StatCard, ConsoleCard, EmptyState, Pill } from "@/components/console/ui";
+import { NewQuestionButton } from "@/components/admin/admin-actions";
 
 export const metadata = { title: "Bank Soal — Admin Albirru" };
 
@@ -26,7 +27,7 @@ export default async function AdminBankSoal() {
   return (
     <>
       <ConsoleTopbar eyebrow="Konten" title="Bank Soal" subtitle={`${total} soal dalam bank.`} nama={profile?.nama ?? "Admin"} roleLabel="Admin"
-        right={<div className="flex gap-2"><Link href="/admin/bank-soal/import" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink hover:bg-muted"><Upload size={15} /> Import</Link><button className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-body-sm font-semibold text-white hover:bg-brand-600"><Plus size={15} /> Soal Baru</button></div>} />
+        right={<div className="flex gap-2"><Link href="/admin/bank-soal/import" className="inline-flex h-10 items-center gap-2 rounded-lg border bg-white px-4 text-body-sm font-semibold text-ink hover:bg-muted"><Upload size={15} /> Import</Link><NewQuestionButton /></div>} />
 
       <div className="space-y-5 p-5 lg:p-7">
         <div className="grid gap-5 sm:grid-cols-3">

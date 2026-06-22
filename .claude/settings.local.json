@@ -32,7 +32,10 @@
       "Bash(xargs echo \"count:\")",
       "Bash(grep -n \"Roadmap ML \\(masa depan\\)\" \"D:/07. Vibe Coding/Albirru Online/ALBIRRU_PRD_v3.md\")",
       "Bash(sed -i '643,644d' \"D:/07. Vibe Coding/Albirru Online/ALBIRRU_PRD_v3.md\" *)",
-      "mcp__visualize__read_me"
+      "mcp__visualize__read_me",
+      "Bash(npx plugins *)",
+      "PowerShell(npx plugins add vercel/vercel-plugin --target claude-code)",
+      "PowerShell(claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill)"
     ]
   }
 }

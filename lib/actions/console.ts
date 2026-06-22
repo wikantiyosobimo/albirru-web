@@ -107,6 +107,135 @@ export async function createTryOut(formData: FormData): Promise<{ ok: boolean; e
   }
 }
 
+// Buat soal baru (admin/staf). Kunci jawaban DISIMPAN server-side, tak pernah dikirim ke klien.
+export async function createQuestion(formData: FormData): Promise<{ ok: boolean; error?: string }> {
+  const { profile } = await getPortalProfile();
+  if (profile?.role !== "staf" && profile?.role !== "admin") return { ok: false, error: "Tidak berwenang." };
+
+  const mapel = String(formData.get("mapel") ?? "").trim();
+  const soal = String(formData.get("soal") ?? "").trim();
+  const answer_key = String(formData.get("answer_key") ?? "").trim().toUpperCase();
+  const level = Number(formData.get("level_kesulitan") ?? 1) || 1;
+  const tipe = String(formData.get("tipe") ?? "pilihan_ganda");
+  const cognitive_skill = String(formData.get("cognitive_skill") ?? "").trim() || null;
+  const kode = String(formData.get("kode") ?? "").trim() || null;
+  const pembahasan = String(formData.get("pembahasan") ?? "").trim() || null;
+  const opsi = {
+    opsi_a: String(formData.get("opsi_a") ?? "").trim() || null,
+    opsi_b: String(formData.get("opsi_b") ?? "").trim() || null,
+    opsi_c: String(formData.get("opsi_c") ?? "").trim() || null,
+    opsi_d: String(formData.get("opsi_d") ?? "").trim() || null,
+    opsi_e: String(formData.get("opsi_e") ?? "").trim() || null,
+  };
+
+  if (!soal) return { ok: false, error: "Teks soal wajib diisi." };
+  if (!["A", "B", "C", "D", "E"].includes(answer_key)) return { ok: false, error: "Kunci jawaban harus A–E." };
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.from("questions").insert({
+      kode, mapel: mapel || "Penalaran Umum", level_kesulitan: level, tipe,
+      cognitive_skill, soal, ...opsi, answer_key, pembahasan, aktif: true,
+    });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/admin/bank-soal");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal menyimpan." };
+  }
+}
+
+// Buat topik / taksonomi (admin/staf).
+export async function createTopic(formData: FormData): Promise<{ ok: boolean; error?: string }> {
+  const { profile } = await getPortalProfile();
+  if (profile?.role !== "staf" && profile?.role !== "admin") return { ok: false, error: "Tidak berwenang." };
+
+  const nama = String(formData.get("nama") ?? "").trim();
+  const mapel = String(formData.get("mapel") ?? "").trim();
+  const level = Number(formData.get("level") ?? 1) || 1;
+  const urutan = Number(formData.get("urutan") ?? 0) || 0;
+  if (!nama || !mapel) return { ok: false, error: "Nama topik & mapel wajib diisi." };
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.from("topics").insert({ slug: slugify(nama), nama, mapel, level, urutan });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/admin/topik");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal menyimpan." };
+  }
+}
+
+// Tambah sekolah mitra (admin).
+export async function createSchool(formData: FormData): Promise<{ ok: boolean; error?: string }> {
+  const { profile } = await getPortalProfile();
+  if (profile?.role !== "admin") return { ok: false, error: "Hanya admin." };
+
+  const nama = String(formData.get("nama") ?? "").trim();
+  const kota = String(formData.get("kota") ?? "").trim() || null;
+  const provinsi = String(formData.get("provinsi") ?? "").trim() || null;
+  const plan = String(formData.get("plan") ?? "free");
+  if (!nama) return { ok: false, error: "Nama sekolah wajib diisi." };
+
+  const kode = nama.split(/\s+/).map((w) => w[0] ?? "").join("").toUpperCase().slice(0, 4) + "-" + Math.floor(1000 + (nama.length * 137) % 9000);
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.from("schools").insert({ nama, kode, kota, provinsi, plan });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/admin/sekolah");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal menyimpan." };
+  }
+}
+
+// Buat blueprint paket (admin).
+export async function createBlueprint(formData: FormData): Promise<{ ok: boolean; error?: string }> {
+  const { profile } = await getPortalProfile();
+  if (profile?.role !== "admin") return { ok: false, error: "Hanya admin." };
+
+  const nama = String(formData.get("nama") ?? "").trim();
+  const tipe = String(formData.get("tipe") ?? "SNBT");
+  const durasi = Number(formData.get("durasi_menit") ?? 0) || null;
+  if (!nama) return { ok: false, error: "Nama blueprint wajib diisi." };
+
+  // Komposisi: pasangan mapel|jumlah dari textarea (satu per baris).
+  const raw = String(formData.get("komposisi") ?? "").trim();
+  const komposisi = raw.split("\n").map((line) => {
+    const [mapel, jumlah] = line.split("|").map((s) => s.trim());
+    return mapel ? { mapel, jumlah: Number(jumlah) || 0 } : null;
+  }).filter(Boolean);
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.from("test_blueprints").insert({ nama, tipe, durasi_menit: durasi, komposisi });
+    if (error) return { ok: false, error: error.message };
+    revalidatePath("/admin/blueprint");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal menyimpan." };
+  }
+}
+
+// Kirim email reset password ke pengguna (admin).
+export async function sendPasswordReset(email: string): Promise<{ ok: boolean; error?: string }> {
+  const { profile } = await getPortalProfile();
+  if (profile?.role !== "admin") return { ok: false, error: "Hanya admin." };
+  if (!email) return { ok: false, error: "Email tidak tersedia." };
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://albirru-web.vercel.app"}/lupa-sandi/reset`,
+    });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Gagal mengirim." };
+  }
+}
+
 // Ubah role pengguna (admin) via RPC ber-audit.
 export async function setUserRole(userId: string, role: string): Promise<{ ok: boolean; error?: string }> {
   const { profile } = await getPortalProfile();

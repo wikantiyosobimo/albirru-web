@@ -46,6 +46,10 @@ $$;
 ALTER TABLE public.tryouts ADD COLUMN IF NOT EXISTS slug text;
 ALTER TABLE public.tryouts ADD COLUMN IF NOT EXISTS jumlah_soal int DEFAULT 20;
 ALTER TABLE public.tryouts ADD COLUMN IF NOT EXISTS dibuat_oleh uuid REFERENCES auth.users(id);
+-- Izinkan status 'draft' untuk paket baru yang belum dipublikasikan.
+ALTER TABLE public.tryouts DROP CONSTRAINT IF EXISTS tryouts_status_check;
+ALTER TABLE public.tryouts ADD CONSTRAINT tryouts_status_check
+  CHECK (status IN ('draft','tersedia','berlangsung','selesai','arsip'));
 
 -- Bank Soal (questions)
 CREATE TABLE IF NOT EXISTS public.questions (
@@ -341,8 +345,11 @@ BEGIN
   SELECT role INTO v_caller FROM public.profiles WHERE id = auth.uid();
   IF v_caller <> 'admin' THEN RAISE EXCEPTION 'forbidden'; END IF;
 
-  SELECT row_to_json(p)::jsonb INTO v_profile
-  FROM public.profiles p WHERE p.id = p_id;
+  SELECT row_to_json(p)::jsonb INTO v_profile FROM public.profiles p WHERE p.id = p_id;
+  -- Sertakan email (dari auth.users) agar admin bisa kirim reset password.
+  IF v_profile IS NOT NULL THEN
+    v_profile := v_profile || jsonb_build_object('email', (SELECT email FROM auth.users WHERE id = p_id));
+  END IF;
 
   SELECT coalesce(jsonb_agg(jsonb_build_object(
     'tryout_id', a.tryout_id, 'skor', a.skor, 'benar', a.benar,

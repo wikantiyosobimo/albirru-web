@@ -1,8 +1,9 @@
-import { School, Plus, MapPin, Users } from "lucide-react";
+import { School, MapPin, Users } from "lucide-react";
 import { requireAdmin } from "@/lib/portal/roles";
 import { createClient } from "@/lib/supabase/server";
 import { ConsoleTopbar } from "@/components/console/topbar";
 import { EmptyState, Pill } from "@/components/console/ui";
+import { NewSchoolButton } from "@/components/admin/admin-actions";
 
 export const metadata = { title: "Sekolah — Admin Albirru" };
 
@@ -20,7 +21,7 @@ export default async function AdminSekolahPage() {
   return (
     <>
       <ConsoleTopbar eyebrow="Pengguna & Bisnis" title="Sekolah Mitra" subtitle={`${list.length} sekolah terdaftar.`} nama={profile?.nama ?? "Admin"} roleLabel="Admin"
-        right={<button className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-body-sm font-semibold text-white hover:bg-brand-600"><Plus size={15} /> Tambah Sekolah</button>} />
+        right={<NewSchoolButton />} />
 
       <div className="p-5 lg:p-7">
         {list.length === 0 ? (
