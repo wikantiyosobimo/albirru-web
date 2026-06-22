@@ -52,6 +52,10 @@ ALTER TABLE public.tryouts ADD CONSTRAINT tryouts_status_check
   CHECK (status IN ('draft','tersedia','berlangsung','selesai','arsip'));
 
 -- Bank Soal (questions)
+-- CATATAN: di produksi tabel `questions` SUDAH ADA dengan skema asli (PRD BAB 6):
+--   teks soal + opsi di kolom `konten` jsonb, `tipe` ∈ (PG|benar_salah|menjodohkan|isian).
+--   CREATE di bawah hanya fallback untuk DB kosong; penulisan soal lewat RPC di
+--   `admin-question-rpcs.sql` (admin_create_question / admin_import_questions).
 CREATE TABLE IF NOT EXISTS public.questions (
   id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   kode             text,

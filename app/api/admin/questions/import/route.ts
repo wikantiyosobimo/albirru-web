@@ -57,38 +57,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Kolom wajib 'soal' dan 'answer_key' tidak ada di header." }, { status: 400 });
   }
 
-  const valid: Record<string, unknown>[] = [];
-  const errors: { baris: number; alasan: string }[] = [];
-
+  // Susun baris untuk RPC. Validasi final & insert dilakukan server-side (SECURITY DEFINER),
+  // sehingga answer_key tak pernah lewat kolom yang ter-grant ke klien.
+  const payload = [];
   for (let r = 1; r < rows.length; r++) {
     const cells = rows[r];
     const get = (i: number) => (i >= 0 && i < cells.length ? cells[i].trim() : "");
-    const soal = get(col.soal);
-    const key = get(col.key).toUpperCase();
-    if (!soal) { errors.push({ baris: r + 1, alasan: "Teks soal kosong." }); continue; }
-    if (!["A", "B", "C", "D", "E"].includes(key)) { errors.push({ baris: r + 1, alasan: `Kunci '${key}' tidak valid (harus A–E).` }); continue; }
-    valid.push({
-      kode: get(col.kode) || null,
-      mapel: get(col.mapel) || "Penalaran Umum",
-      topic_slug: get(col.topic_slug) || null,
-      level_kesulitan: Number(get(col.level)) || 1,
-      tipe: get(col.tipe) || "pilihan_ganda",
-      cognitive_skill: get(col.skill) || null,
-      soal,
-      opsi_a: get(col.a) || null, opsi_b: get(col.b) || null, opsi_c: get(col.c) || null,
-      opsi_d: get(col.d) || null, opsi_e: get(col.e) || null,
-      answer_key: key,
-      pembahasan: get(col.pembahasan) || null,
-      aktif: true,
+    const opsiRaw = [get(col.a), get(col.b), get(col.c), get(col.d), get(col.e)];
+    let lastFilled = -1;
+    opsiRaw.forEach((v, i) => { if (v) lastFilled = i; });
+    payload.push({
+      baris: r + 1,
+      kode: get(col.kode),
+      mapel: get(col.mapel),
+      topic_slug: get(col.topic_slug),
+      level: Number(get(col.level)) || 1,
+      tipe: get(col.tipe),
+      skill: get(col.skill),
+      soal: get(col.soal),
+      opsi: opsiRaw.slice(0, lastFilled + 1),
+      answer_key: get(col.key).toUpperCase(),
+      pembahasan: get(col.pembahasan),
     });
   }
 
-  let inserted = 0;
-  if (valid.length > 0) {
-    const { error, count } = await supabase.from("questions").insert(valid, { count: "exact" });
-    if (error) return NextResponse.json({ error: error.message, errors }, { status: 500 });
-    inserted = count ?? valid.length;
-  }
+  const { data, error } = await supabase.rpc("admin_import_questions", { p_rows: payload });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ inserted, ditolak: errors.length, errors: errors.slice(0, 20) });
+  const result = (data ?? { inserted: 0, ditolak: 0, errors: [] }) as { inserted: number; ditolak: number; errors: { baris: number; alasan: string }[] };
+  return NextResponse.json({ inserted: result.inserted, ditolak: result.ditolak, errors: (result.errors ?? []).slice(0, 20) });
 }

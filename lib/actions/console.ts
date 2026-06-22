@@ -115,27 +115,29 @@ export async function createQuestion(formData: FormData): Promise<{ ok: boolean;
   const mapel = String(formData.get("mapel") ?? "").trim();
   const soal = String(formData.get("soal") ?? "").trim();
   const answer_key = String(formData.get("answer_key") ?? "").trim().toUpperCase();
-  const level = Number(formData.get("level_kesulitan") ?? 1) || 1;
+  const level = Number(formData.get("level_kesulitan") ?? 3) || 3;
   const tipe = String(formData.get("tipe") ?? "pilihan_ganda");
   const cognitive_skill = String(formData.get("cognitive_skill") ?? "").trim() || null;
   const kode = String(formData.get("kode") ?? "").trim() || null;
   const pembahasan = String(formData.get("pembahasan") ?? "").trim() || null;
-  const opsi = {
-    opsi_a: String(formData.get("opsi_a") ?? "").trim() || null,
-    opsi_b: String(formData.get("opsi_b") ?? "").trim() || null,
-    opsi_c: String(formData.get("opsi_c") ?? "").trim() || null,
-    opsi_d: String(formData.get("opsi_d") ?? "").trim() || null,
-    opsi_e: String(formData.get("opsi_e") ?? "").trim() || null,
-  };
+
+  // Bangun array opsi (A–E), buang ekor yang kosong agar selaras dengan struktur konten asli.
+  const opsiRaw = ["opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e"].map((k) => String(formData.get(k) ?? "").trim());
+  let lastFilled = -1;
+  opsiRaw.forEach((v, i) => { if (v) lastFilled = i; });
+  const opsi = opsiRaw.slice(0, lastFilled + 1);
 
   if (!soal) return { ok: false, error: "Teks soal wajib diisi." };
   if (!["A", "B", "C", "D", "E"].includes(answer_key)) return { ok: false, error: "Kunci jawaban harus A–E." };
+  if (opsi.length < 2) return { ok: false, error: "Isi minimal 2 opsi jawaban." };
+  if ((answer_key.charCodeAt(0) - 64) > opsi.length) return { ok: false, error: `Opsi ${answer_key} belum diisi.` };
 
   try {
     const supabase = await createClient();
-    const { error } = await supabase.from("questions").insert({
-      kode, mapel: mapel || "Penalaran Umum", level_kesulitan: level, tipe,
-      cognitive_skill, soal, ...opsi, answer_key, pembahasan, aktif: true,
+    // Tulis via SECURITY DEFINER RPC — answer_key (rahasia) tak pernah lewat kolom yang ter-grant ke klien.
+    const { error } = await supabase.rpc("admin_create_question", {
+      p_mapel: mapel || "Penalaran Umum", p_soal: soal, p_opsi: opsi, p_answer_key: answer_key,
+      p_level: level, p_tipe: tipe, p_skill: cognitive_skill, p_kode: kode, p_pembahasan: pembahasan,
     });
     if (error) return { ok: false, error: error.message };
     revalidatePath("/admin/bank-soal");
